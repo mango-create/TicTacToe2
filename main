@@ -1,0 +1,75 @@
+import java.util.Scanner;
+
+public class TicTacToe {
+    int turn = 0;
+    final int MAX_TURNS = 9;
+    final int BOARD_SIZE = 9;
+
+    public static void main(String[] args) {
+        TicTacToe session = new TicTacToe();
+        session.playGame();
+    }
+
+    public void playGame(){
+        GameBoard gameBoard = new GameBoard();
+        resetTurnCounter();
+        gameBoard.printBoard();
+
+        while(!gameBoard.isThereAWinner() && getTurn() < MAX_TURNS){
+            gameBoard.updateBoard(promptUserForPosition(gameBoard), getTurn());
+            gameBoard.printBoard();
+            incrementTurn();
+        }
+
+        printWinner();
+        promptToPlayAgain();
+    }
+
+    private void promptToPlayAgain() {
+        System.out.println("Would you like to play again? Y/N");
+        if(new Scanner(System.in).next().toUpperCase().equals("Y")) {
+            playGame();
+        } else {
+            System.out.println("Goodbye");
+        }
+    }
+    private void printWinner() {
+        if (getTurn() >= MAX_TURNS){
+            System.out.println("It's a tie game!");
+        } else {
+            char XorO = getTurn() % 2 == 0 ? 'O': 'X';
+            System.out.println(XorO + " has won the game!");
+        }
+    }
+
+    public int promptUserForPosition(GameBoard gameBoard){
+        int position = getInput();
+        //If the position the user enters has already been played, keep asking for another
+        while(gameBoard.board[position-1] == 'X' || gameBoard.board[position-1] == 'O'){
+            System.out.println("Someone already played there");
+            position = getInput();
+        }
+        return position;
+    }
+    public int getInput(){
+        char XorO = this.turn % 2 == 0 ? 'X': 'O';
+        System.out.println("It's " + XorO + "'s turn. Where do you want to mark? (1-9)");
+        int i = new Scanner(System.in).nextInt();
+        if (1 <= i  && i <= BOARD_SIZE){
+            return i;
+        } else {
+            System.out.println("Enter a number between 1 and 9");
+            return getInput();
+        }
+    }
+    public int getTurn() {
+        return turn;
+    }
+    private void incrementTurn() {
+        this.turn++;
+    }
+    public void resetTurnCounter(){
+        this.turn = 0;
+    }
+
+}
